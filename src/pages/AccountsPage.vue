@@ -4,11 +4,15 @@
       <q-icon name="wallet" size="76px" color="primary"></q-icon>
       <h2 class="text-primary">Your accounts</h2>
     </div>
-    <q-list v-else>
-      <q-item v-for="account in accounts" :key="account.id">
-        <q-item-section> {{ account.name }} </q-item-section>
-      </q-item>
-    </q-list>
+    <div v-else class="q-pa-md q-gutter-md flex flex-center">
+      <account-card
+        v-for="account in accounts"
+        :key="account.id"
+        :account="account"
+        @edit="onEditAccount(account)"
+        @delete="onDeleteAccount(account)"
+      />
+    </div>
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
       <q-btn fab icon="add" color="secondary" @click="toggleModal" />
     </q-page-sticky>
@@ -19,7 +23,8 @@
 <script setup>
 import { ref } from "vue";
 import { useAccountsStore } from "stores/accounts-store";
-import AddAccountModal from "components/accounts/AddAccountModal.vue";
+import AddAccountModal from "components/accounts/AccountAddModal.vue";
+import AccountCard from "components/accounts/AccountCard.vue";
 
 const store = useAccountsStore();
 const showAddModal = ref(false);
