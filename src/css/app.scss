@@ -1,3 +1,8 @@
 // app global css in SCSS form
+:root {
+  --animate-duration: 0.4s !important;
+}
 
-
+.in-motion {
+  transition: all 0.3s ease-in-out;
+}
