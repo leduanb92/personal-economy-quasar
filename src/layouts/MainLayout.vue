@@ -13,6 +13,14 @@
 
         <q-toolbar-title> Personal Economy </q-toolbar-title>
 
+        <q-btn
+          flat
+          round
+          dense
+          :icon="currentModeIcon"
+          class="q-mr-sm"
+          @click="toggleMode"
+        />
         <div>v0.5</div>
       </q-toolbar>
     </q-header>
@@ -42,7 +50,8 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, computed } from "vue";
+import { useQuasar } from "quasar";
 import EssentialLink from "components/EssentialLink.vue";
 
 const linksList = [
@@ -68,14 +77,25 @@ export default defineComponent({
   },
 
   setup() {
+    const $q = useQuasar();
     const leftDrawerOpen = ref(false);
+
+    const currentModeIcon = computed(() => {
+      return $q.dark.isActive ? "light_mode" : "dark_mode";
+    });
+    const toggleMode = () => {
+      $q.dark.toggle();
+    };
+    const toggleLeftDrawer = () => {
+      leftDrawerOpen.value = !leftDrawerOpen.value;
+    };
 
     return {
       essentialLinks: linksList,
       leftDrawerOpen,
-      toggleLeftDrawer() {
-        leftDrawerOpen.value = !leftDrawerOpen.value;
-      },
+      currentModeIcon,
+      toggleMode,
+      toggleLeftDrawer,
     };
   },
 });
