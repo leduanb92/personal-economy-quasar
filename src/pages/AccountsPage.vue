@@ -25,26 +25,49 @@
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
       <q-btn fab icon="add" color="secondary" @click="toggleModal" />
     </q-page-sticky>
-    <add-account-modal v-model="showAddModal" @account-added="addAccount" />
+    <add-account-modal
+      v-model="accountModal.value"
+      :account="accountModal.account"
+      @account-added="addAccount"
+      @account-edited="editAccount"
+    />
   </q-page>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { reactive } from "vue";
 import { useAccountsStore } from "stores/accounts-store";
 import AddAccountModal from "components/accounts/AccountAddModal.vue";
 import AccountCard from "components/accounts/AccountCard.vue";
 
 const store = useAccountsStore();
-const showAddModal = ref(false);
+const accountModal = reactive({
+  value: false,
+  account: null,
+});
 
 const accounts = store.getAccounts;
 
 //Methods
 const toggleModal = function () {
-  showAddModal.value = !showAddModal.value;
+  accountModal.value = !accountModal.value;
 };
 const addAccount = function (account) {
   store.addAccount(account);
+  accountModal.account = null;
+};
+
+const editAccount = function (account) {
+  store.editAccount(account);
+  accountModal.account = null;
+};
+
+const onEditAccount = function (account) {
+  accountModal.account = account;
+  accountModal.value = true;
+};
+
+const onDeleteAccount = function (account) {
+  store.deleteAccount(account);
 };
 </script>
