@@ -36,7 +36,7 @@
 </template>
 
 <script setup>
-import { reactive } from "vue";
+import { computed, reactive } from "vue";
 import { useAccountsStore } from "stores/accounts-store";
 import AccountModal from "components/accounts/AccountModal.vue";
 import AccountCard from "components/accounts/AccountCard.vue";
@@ -47,7 +47,9 @@ const accountModal = reactive({
   account: null,
 });
 
-const accounts = store.getAccounts;
+const accounts = computed(() =>
+  store.accounts.toSorted((a, b) => a.name.localeCompare(b.name))
+);
 
 //Methods
 const toggleModal = function () {
