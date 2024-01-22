@@ -11,7 +11,13 @@
       </q-card-section>
 
       <q-card-actions align="right" class="text-primary">
-        <q-btn v-close-popup icon="close" flat label="Cancel" />
+        <q-btn
+          v-close-popup
+          flat
+          icon="close"
+          label="Cancel"
+          @click="onCancel"
+        />
         <q-btn
           v-close-popup
           flat
@@ -31,6 +37,7 @@ const emit = defineEmits([
   "update:modelValue",
   "accountAdded",
   "accountEdited",
+  "cancelled",
 ]);
 const props = defineProps({
   modelValue: Boolean,
@@ -66,6 +73,11 @@ const resetForm = function () {
   form.id = "";
   form.name = "";
   form.initialBalance = 0;
+};
+
+const onCancel = function () {
+  resetForm();
+  emit("cancelled");
 };
 
 const onSave = function () {
