@@ -5,7 +5,8 @@ export const useAccountsStore = defineStore("accounts", {
     accounts: [],
   }),
   getters: {
-    getAccounts: (state) => state.accounts,
+    getAccounts: (state) =>
+      state.accounts.sort((a, b) => a.name.localeCompare(b.name)),
   },
   actions: {
     addAccount(account) {
