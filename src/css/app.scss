@@ -6,3 +6,25 @@
 .in-motion {
   transition: all 0.3s ease-in-out;
 }
+
+.h-divider {
+  background-color: $grey-9;
+  height: 2px;
+  width: 100%;
+}
+
+.v-divider {
+  background-color: $grey-9;
+  height: 100%;
+  width: 2px;
+}
+
+.q-field__control-container .q-field__native {
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus {
+    -webkit-text-fill-color: white;
+    -webkit-animation-fill-mode: unset;
+    transition: background-color 10000s ease-in-out 100000s !important;
+  }
+}
