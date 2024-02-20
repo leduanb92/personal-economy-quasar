@@ -37,7 +37,7 @@ import { useQuasar } from "quasar";
 const $q = useQuasar();
 
 const currentModeIcon = computed(() => {
-  return $q.dark.isActive ? "light_mode" : "dark_mode";
+  return $q.dark.isActive ? "r_light_mode" : "r_dark_mode";
 });
 
 //Methods

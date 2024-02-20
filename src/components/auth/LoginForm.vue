@@ -19,7 +19,7 @@
           autofocus
         >
           <template v-slot:before>
-            <q-icon name="email" color="white" />
+            <q-icon name="r_email" color="white" />
           </template>
         </q-input>
         <q-input
@@ -31,7 +31,7 @@
           dark
         >
           <template v-slot:before>
-            <q-icon name="lock" color="white" />
+            <q-icon name="r_lock" color="white" />
           </template>
         </q-input>
         <q-space></q-space>
@@ -47,16 +47,34 @@
         </q-btn>
       </q-form>
     </q-card-section>
-    <q-slide-transition appear>
-      <q-banner
-        v-if="incorrectAuth"
-        dense
-        rounded
-        class="mt-6 bg-negative text-white"
+    <q-card-section
+      class="q-pa-none overflow-hidden-y"
+      style="transition: height 0.4s ease-in-out"
+    >
+      <transition
+        appear
+        enter-active-class="animated fadeInUp"
+        leave-active-class="animated fadeOutDown"
       >
-        <span v-for="error of errors" :key="error">{{ error }}</span>
-      </q-banner>
-    </q-slide-transition>
+        <q-banner
+          v-if="incorrectAuth"
+          dense
+          rounded
+          inline-actions
+          class="mt-6 bg-negative text-white"
+        >
+          <span v-for="error of errors" :key="error">{{ error }}</span>
+          <template v-slot:action>
+            <q-btn
+              flat
+              color="white"
+              icon="r_close"
+              @click="incorrectAuth = false"
+            />
+          </template>
+        </q-banner>
+      </transition>
+    </q-card-section>
   </q-card>
 </template>
 
@@ -73,7 +91,14 @@ const loading = ref(false);
 const email = ref("");
 const password = ref("");
 const errors = reactive([]);
-const incorrectAuth = computed(() => errors.length > 0);
+const incorrectAuth = computed({
+  get: () => errors.length > 0,
+  set: (value) => {
+    if (!value) {
+      errors.length = 0;
+    }
+  },
+});
 
 const login = async () => {
   loading.value = true;
@@ -91,7 +116,6 @@ const login = async () => {
       }
     })
     .catch((err) => {
-      console.log(err);
       const responseErrors = Object.values(err.response.data).flat();
       if (responseErrors.length === 0) {
         responseErrors.push("There was an error. Please try again.");
