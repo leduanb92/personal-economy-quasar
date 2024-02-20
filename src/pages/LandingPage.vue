@@ -2,8 +2,15 @@
   <q-page class="home-page flex flex-center q-px-xl q-py-md">
     <div class="row justify-center" style="row-gap: 40px">
       <div class="col-10 col-md-6 text-center flex flex-center q-px-lg">
-        <h1 class="text-h3">Manage your money with Personal Economy</h1>
-        <div class="h-divider bg-white q-mb-lg"></div>
+        <h1 class="text-h3 q-my-none">
+          Manage your money with Personal Economy
+        </h1>
+        <q-separator
+          color="white"
+          size="0.125rem"
+          class="full-width"
+          spaced
+        ></q-separator>
         <p class="text-justify text-subtitle1">
           Welcome, with us you will be able to manage your different money
           accounts and save the operations you make in them. You will also be
