@@ -2,15 +2,6 @@
   <q-layout view="lHh Lpr lFf">
     <q-header elevated reveal>
       <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="r_menu"
-          aria-label="Menu"
-          @click="toggleMiniMode"
-        />
-
         <q-toolbar-title> Personal Economy </q-toolbar-title>
 
         <q-btn
@@ -29,14 +20,33 @@
       :model-value="true"
       show-if-above
       elevated
+      dark
+      class="bg-primary"
       :mini="miniMode"
       :breakpoint="720"
       :width="210"
     >
       <q-list>
-        <q-item-label header> Essential Links </q-item-label>
+        <q-item class="q-mx-sm q-px-xs">
+          <q-item-section side>
+            <q-btn
+              flat
+              dense
+              round
+              color="white"
+              :icon="miniMode ? 'r_menu' : 'r_arrow_back'"
+              aria-label="Menu"
+              @click="toggleMiniMode"
+            />
+          </q-item-section>
+        </q-item>
 
-        <EssentialLink v-for="link in links" :key="link.title" v-bind="link" />
+        <EssentialLink
+          v-for="link in links"
+          :key="link.title"
+          v-bind="link"
+          :mini-mode="miniMode"
+        />
       </q-list>
     </q-drawer>
 
@@ -64,18 +74,20 @@ const links = reactive([
     title: "Dashboard",
     caption: "",
     icon: "r_home",
+    color: "white",
     link: { name: "dashboard" },
   },
   {
     title: "Accounts",
     caption: "Manage your wallets",
     icon: "r_wallet",
+    color: "white",
     link: { name: "account-list" },
   },
 ]);
 
 const $q = useQuasar();
-const miniMode = ref(false);
+const miniMode = ref(true);
 
 const currentModeIcon = computed(() => {
   return $q.dark.isActive ? "r_light_mode" : "r_dark_mode";
