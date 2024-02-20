@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hHh Lpr lFf">
+  <q-layout view="lHh Lpr lFf">
     <q-header elevated reveal>
       <q-toolbar>
         <q-btn
@@ -8,7 +8,7 @@
           round
           icon="r_menu"
           aria-label="Menu"
-          @click="toggleLeftDrawer"
+          @click="toggleMiniMode"
         />
 
         <q-toolbar-title> Personal Economy </q-toolbar-title>
@@ -26,20 +26,17 @@
     </q-header>
 
     <q-drawer
-      v-model="leftDrawerOpen"
+      :model-value="true"
       show-if-above
       elevated
+      :mini="miniMode"
       :breakpoint="720"
-      :width="230"
+      :width="210"
     >
       <q-list>
         <q-item-label header> Essential Links </q-item-label>
 
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
+        <EssentialLink v-for="link in links" :key="link.title" v-bind="link" />
       </q-list>
     </q-drawer>
 
@@ -57,54 +54,36 @@
   </q-layout>
 </template>
 
-<script>
-import { computed, defineComponent, ref } from "vue";
+<script setup>
+import { computed, reactive, ref } from "vue";
 import { useQuasar } from "quasar";
 import EssentialLink from "components/EssentialLink.vue";
 
-const linksList = [
+const links = reactive([
   {
-    title: "Home",
+    title: "Dashboard",
     caption: "",
     icon: "r_home",
-    link: "/",
+    link: { name: "dashboard" },
   },
   {
     title: "Accounts",
     caption: "Manage your wallets",
     icon: "r_wallet",
-    link: "/accounts/",
+    link: { name: "account-list" },
   },
-];
+]);
 
-export default defineComponent({
-  name: "MainLayout",
+const $q = useQuasar();
+const miniMode = ref(false);
 
-  components: {
-    EssentialLink,
-  },
-
-  setup() {
-    const $q = useQuasar();
-    const leftDrawerOpen = ref(false);
-
-    const currentModeIcon = computed(() => {
-      return $q.dark.isActive ? "r_light_mode" : "r_dark_mode";
-    });
-    const toggleMode = () => {
-      $q.dark.toggle();
-    };
-    const toggleLeftDrawer = () => {
-      leftDrawerOpen.value = !leftDrawerOpen.value;
-    };
-
-    return {
-      essentialLinks: linksList,
-      leftDrawerOpen,
-      currentModeIcon,
-      toggleMode,
-      toggleLeftDrawer,
-    };
-  },
+const currentModeIcon = computed(() => {
+  return $q.dark.isActive ? "r_light_mode" : "r_dark_mode";
 });
+const toggleMode = () => {
+  $q.dark.toggle();
+};
+const toggleMiniMode = () => {
+  miniMode.value = !miniMode.value;
+};
 </script>

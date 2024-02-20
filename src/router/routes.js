@@ -1,9 +1,13 @@
 const routes = [
   {
-    path: "/home",
+    path: "/",
     component: () => import("layouts/PublicLayout.vue"),
     children: [
-      { path: "", name: "home", component: () => import("pages/HomePage.vue") },
+      {
+        path: "",
+        name: "index",
+        component: () => import("pages/LandingPage.vue"),
+      },
     ],
   },
   {
@@ -11,12 +15,12 @@ const routes = [
     component: () => import("layouts/MainLayout.vue"),
     children: [
       {
-        path: "",
+        path: "dashboard",
         name: "dashboard",
-        component: () => import("pages/IndexPage.vue"),
+        component: () => import("pages/DashboardPage.vue"),
       },
       {
-        path: "accounts/",
+        path: "accounts",
         name: "account-list",
         component: () => import("pages/AccountsPage.vue"),
       },
