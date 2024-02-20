@@ -10,26 +10,53 @@
     <q-card-section class="login-form">
       <q-form class="px-0 text-white">
         <q-input
-          v-model="email"
-          dark
-          label="Email"
-          for="email"
-          type="email"
+          v-model="form.username"
+          label="Username"
+          for="username"
+          type="text"
+          maxlength="20"
+          color="white"
           autofocus
+          dark
         >
           <template v-slot:before>
-            <q-icon name="email" />
+            <q-icon name="r_person" color="white" />
           </template>
         </q-input>
         <q-input
-          v-model="password"
+          v-model="form.email"
+          label="Email"
+          for="email"
+          type="email"
+          color="white"
           dark
-          label="Password"
-          for="password"
-          type="password"
         >
           <template v-slot:before>
-            <q-icon name="lock" />
+            <q-icon name="r_email" color="white" />
+          </template>
+        </q-input>
+        <q-input
+          v-model="form.password1"
+          label="Password"
+          for="password1"
+          type="password"
+          color="white"
+          dark
+        >
+          <template v-slot:before>
+            <q-icon name="r_lock" color="white" />
+          </template>
+        </q-input>
+        <q-input
+          v-model="form.password2"
+          label="Confirm Password"
+          for="password2"
+          type="password"
+          color="white"
+          dark
+        >
+          <template v-slot:before>
+            <q-icon name="r_lock" color="white" />
           </template>
         </q-input>
         <q-space></q-space>
@@ -40,7 +67,7 @@
           color="white"
           text-color="primary"
           class="full-width q-mt-lg"
-          @click="login"
+          @click="register"
           >Accept
         </q-btn>
       </q-form>
@@ -52,23 +79,54 @@
         rounded
         class="mt-6 bg-negative text-white"
       >
-        <span v-for="error in errors" :key="error[0]">{{ error[0] }}</span>
+        <span v-for="error of errors" :key="error">{{ error }}</span>
       </q-banner>
     </q-slide-transition>
   </q-card>
 </template>
 
 <script setup>
-import { reactive, ref } from "vue";
+import { computed, reactive, ref } from "vue";
 import { useAuthStore } from "stores/auth-store";
-
-const loading = ref(false);
-const incorrectAuth = ref(false);
-const email = ref("");
-const password = ref("");
-const errors = reactive({});
+import { useRouter } from "vue-router";
+import authServer from "src/server/auth";
 
 const authStore = useAuthStore();
+const router = useRouter();
+
+const form = reactive({
+  username: "",
+  email: "",
+  password1: "",
+  password2: "",
+});
+const loading = ref(false);
+const errors = reactive([]);
+const incorrectAuth = computed(() => errors.length > 0);
+
+const register = async () => {
+  loading.value = true;
+  errors.length = 0;
+
+  await authServer
+    .register(form)
+    .then((response) => {
+      if (response && response.data) {
+        authStore.saveLoginData(response.data);
+        router.push({ name: "dashboard" });
+      }
+    })
+    .catch((err) => {
+      const responseErrors = Object.values(err.response.data).flat();
+      if (responseErrors.length === 0) {
+        responseErrors.push("There was an error. Please try again.");
+      }
+      errors.push(...responseErrors);
+    })
+    .finally(() => {
+      loading.value = false;
+    });
+};
 </script>
 
 <style scoped>
