@@ -14,14 +14,14 @@
         <q-btn
           v-close-popup
           flat
-          icon="close"
+          icon="r_close"
           label="Cancel"
           @click="onCancel"
         />
         <q-btn
           v-close-popup
           flat
-          :icon="account ? 'save' : 'add'"
+          :icon="account ? 'r_save' : 'r_add'"
           :label="account ? 'Save' : 'Add'"
           @click="onSave"
         />

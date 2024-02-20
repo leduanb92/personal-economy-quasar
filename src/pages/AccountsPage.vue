@@ -2,7 +2,7 @@
   <q-page class="flex column flex-center">
     <transition enter-active-class="animated fadeIn" mode="out-in">
       <div v-if="!accounts.length" class="flex column flex-center">
-        <q-icon name="wallet" size="76px" color="primary"></q-icon>
+        <q-icon name="r_wallet" size="76px" color="primary"></q-icon>
         <h2 class="text-primary">Your accounts</h2>
       </div>
       <div v-else class="q-pa-md q-gutter-md flex flex-center">
@@ -23,7 +23,7 @@
       </div>
     </transition>
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
-      <q-btn fab icon="add" color="secondary" @click="toggleModal" />
+      <q-btn fab icon="r_add" color="secondary" @click="toggleModal" />
     </q-page-sticky>
     <account-modal
       v-model="accountModal.value"

@@ -11,14 +11,14 @@
         flat
         size="sm"
         color="white"
-        icon="edit"
+        icon="r_edit"
         @click="$emit('edit', account)"
       />
       <q-btn
         flat
         size="sm"
         color="white"
-        icon="delete"
+        icon="r_delete"
         @click="$emit('delete', account)"
       />
     </q-card-actions>

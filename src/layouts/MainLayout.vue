@@ -6,7 +6,7 @@
           flat
           dense
           round
-          icon="menu"
+          icon="r_menu"
           aria-label="Menu"
           @click="toggleLeftDrawer"
         />
@@ -44,13 +44,21 @@
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <router-view v-slot="{ Component }">
+        <transition
+          enter-active-class="animated fadeIn"
+          leave-active-class="animated fadeOut"
+          mode="out-in"
+        >
+          <component :is="Component" />
+        </transition>
+      </router-view>
     </q-page-container>
   </q-layout>
 </template>
 
 <script>
-import { defineComponent, ref, computed } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import { useQuasar } from "quasar";
 import EssentialLink from "components/EssentialLink.vue";
 
@@ -58,13 +66,13 @@ const linksList = [
   {
     title: "Home",
     caption: "",
-    icon: "home",
+    icon: "r_home",
     link: "/",
   },
   {
     title: "Accounts",
     caption: "Manage your wallets",
-    icon: "wallet",
+    icon: "r_wallet",
     link: "/accounts/",
   },
 ];
@@ -81,7 +89,7 @@ export default defineComponent({
     const leftDrawerOpen = ref(false);
 
     const currentModeIcon = computed(() => {
-      return $q.dark.isActive ? "light_mode" : "dark_mode";
+      return $q.dark.isActive ? "r_light_mode" : "r_dark_mode";
     });
     const toggleMode = () => {
       $q.dark.toggle();
