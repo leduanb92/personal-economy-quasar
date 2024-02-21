@@ -1,5 +1,6 @@
 import { boot } from "quasar/wrappers";
 import axios from "axios";
+import { setupInterceptors } from "src/server/core";
 
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
@@ -8,15 +9,16 @@ import axios from "axios";
 // "export default () => {}" function below (which runs individually
 // for each client)
 const api = axios.create({
-  baseURL: 'http://localhost:8036/',
+  baseURL: "http://localhost:8036/",
   withCredentials: false,
   headers: {
-    Accept: 'application/json',
-    'Content-Type': 'application/json',
-  }
-})
-api.defaults.xsrfCookieName = 'csrftoken';
-api.defaults.xsrfHeaderName = 'X-CSRFToken';
+    Accept: "application/json",
+    "Content-Type": "application/json",
+  },
+});
+api.defaults.xsrfCookieName = "csrftoken";
+api.defaults.xsrfHeaderName = "X-CSRFToken";
+setupInterceptors(api);
 
 export default boot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api

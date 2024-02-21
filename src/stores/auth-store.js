@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import authServer from "../server/auth";
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
@@ -29,40 +28,14 @@ export const useAuthStore = defineStore("auth", {
         user: data.user,
       };
     },
-    async login(payload) {
-      const response = await authServer.login(payload).catch((err) => {
-        this.errors = err.response.data;
-      });
-      if (response && response.data) {
-        this.saveLoginData(response.data);
-      } else {
-        this.isAuthenticated = false;
-      }
-    },
-    async register(payload) {
-      const response = await authServer.register(payload).catch((err) => {
-        this.errors = err.response.data;
-      });
-      if (response && response.data) {
-        this.saveLoginData(response.data);
-      } else {
-        this.isAuthenticated = false;
-      }
-    },
     async logout() {
-      authServer.logout(this.authData.refresh_token).catch((err) => {
-        this.errors = err.response.data;
-      });
-
       localStorage.removeItem("access_token");
       localStorage.removeItem("refresh_token");
       localStorage.removeItem("user");
 
       this.authData = {};
-      this.isAuthenticated = false;
     },
     refreshToken(data) {
-      this.isAuthenticated = true;
       this.authData.access_token = data.access;
       this.authData.refresh_token = data.refresh;
 
