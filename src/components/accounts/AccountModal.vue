@@ -19,7 +19,6 @@
           @click="onCancel"
         />
         <q-btn
-          v-close-popup
           flat
           :icon="account ? 'r_save' : 'r_add'"
           :label="account ? 'Save' : 'Add'"
@@ -32,13 +31,9 @@
 
 <script setup>
 import { computed, reactive, watchEffect } from "vue";
+import accountsServer from "src/server/accounts";
 
-const emit = defineEmits([
-  "update:modelValue",
-  "accountAdded",
-  "accountEdited",
-  "cancelled",
-]);
+const emit = defineEmits(["update:modelValue", "saved", "cancelled"]);
 const props = defineProps({
   modelValue: Boolean,
   account: { type: Object, default: null },
@@ -48,6 +43,10 @@ const form = reactive({
   id: "",
   name: "",
   initialBalance: 0,
+});
+const errors = reactive({
+  name: [],
+  general_errors: [],
 });
 
 const model = computed({
@@ -74,6 +73,10 @@ const resetForm = function () {
   form.name = "";
   form.initialBalance = 0;
 };
+const cleanErrors = function () {
+  errors.general_errors = [];
+  errors.name = [];
+};
 
 const onCancel = function () {
   resetForm();
@@ -82,18 +85,54 @@ const onCancel = function () {
 
 const onSave = function () {
   if (validate()) {
-    if (props.account) {
-      emit("accountEdited", { ...form });
+    if (!props.account) {
+      accountsServer
+        .addAccount({ ...form })
+        .then(() => {
+          // this.cuentas = response.data.results;
+          resetForm();
+          emit("saved");
+          model.value = false;
+        })
+        .catch((error) => {
+          if (error.response && error.response.status === 401) {
+            // EventBus.dispatch("logout");
+          } else {
+            const errorData = error.response.data;
+            if ("nombre" in errorData) errors.name = errorData["nombre"];
+            if ("general_errors" in errorData)
+              errors.general_errors = errorData["general_errors"];
+          }
+        });
     } else {
-      form.id = crypto.randomUUID();
-      emit("accountAdded", { ...form });
+      accountsServer
+        .updateAccount(form.id, { ...form })
+        .then(() => {
+          // this.cuentas = response.data.results;
+          resetForm();
+          emit("saved");
+          model.value = false;
+        })
+        .catch((error) => {
+          if (error.response && error.response.status === 401) {
+            // EventBus.dispatch("logout");
+          } else {
+            const errorData = error.response.data;
+            if ("nombre" in errorData) errors.name = errorData["nombre"];
+            if ("general_errors" in errorData)
+              errors.general_errors = errorData["general_errors"];
+          }
+        });
     }
-    resetForm();
-    model.value = false;
   }
 };
 const validate = function () {
-  return !!form.name;
+  cleanErrors();
+  if (!form.name) {
+    errors.name = ["Name is required"];
+    return false;
+  }
+  return true;
 };
 </script>
 

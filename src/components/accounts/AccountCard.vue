@@ -3,7 +3,7 @@
     <q-card-section class="flex flex-center column">
       <div class="text-h6">{{ account.name }}</div>
       <div class="text-subtitle2">
-        Balance: ${{ account.balance || account.initialBalance }}
+        Balance: ${{ account.balance ?? account.initialBalance }}
       </div>
     </q-card-section>
     <q-card-actions align="right">
@@ -12,14 +12,14 @@
         size="sm"
         color="white"
         icon="r_edit"
-        @click="$emit('edit', account)"
+        @click="emit('edit', account)"
       />
       <q-btn
         flat
         size="sm"
         color="white"
         icon="r_delete"
-        @click="$emit('delete', account)"
+        @click="emit('delete', account)"
       />
     </q-card-actions>
   </q-card>

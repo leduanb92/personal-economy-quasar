@@ -28,8 +28,7 @@
     <account-modal
       v-model="accountModal.value"
       :account="accountModal.account"
-      @account-added="addAccount"
-      @account-edited="editAccount"
+      @saved="onSavedAccount"
       @cancelled="accountModal.account = null"
     />
   </q-page>
@@ -50,6 +49,11 @@ const accountModal = reactive({
   value: false,
   account: null,
 });
+const loading = ref(false);
+const showMessage = ref(false);
+const message = ref("");
+const messageTimeout = ref(4000);
+const errors = ref({});
 
 const accounts = computed(() =>
   accountsStore.accounts.toSorted((a, b) => a.nombre.localeCompare(b.nombre))
@@ -59,14 +63,11 @@ const accounts = computed(() =>
 const toggleModal = function () {
   accountModal.value = !accountModal.value;
 };
-const addAccount = function (account) {
-  store.addAccount(account);
+const onSavedAccount = function (account) {
   accountModal.account = null;
-};
-
-const editAccount = function (account) {
-  store.editAccount(account);
-  accountModal.account = null;
+  message.value = "The account was saved successfully";
+  showMessage.value = true;
+  refresh();
 };
 
 const onEditAccount = function (account) {
@@ -75,7 +76,25 @@ const onEditAccount = function (account) {
 };
 
 const onDeleteAccount = function (account) {
-  store.deleteAccount(account);
+  accountsServer
+    .deleteAccount(account.id)
+    .then(() => {
+      message.value = "The account was deleted successfully";
+      showMessage.value = true;
+      refresh();
+    })
+    .catch((error) => {
+      if (error.response && error.response.status === 401) {
+        // EventBus.dispatch("logout");
+      } else {
+        const errorData = error.response.data;
+        message.value =
+          errorData["general_errors"] ||
+          errorData["message"] ||
+          "There was an error deleting the account";
+        showMessage.value = true;
+      }
+    });
 };
 const refresh = () => {
   loading.value = true;
