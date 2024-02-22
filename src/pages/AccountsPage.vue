@@ -36,19 +36,23 @@
 </template>
 
 <script setup>
-import { computed, reactive } from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
 import { useAccountsStore } from "stores/accounts-store";
+import { useAuthStore } from "stores/auth-store";
+import accountsServer from "src/server/accounts";
 import AccountModal from "components/accounts/AccountModal.vue";
 import AccountCard from "components/accounts/AccountCard.vue";
 
-const store = useAccountsStore();
+const accountsStore = useAccountsStore();
+const authStore = useAuthStore();
+
 const accountModal = reactive({
   value: false,
   account: null,
 });
 
 const accounts = computed(() =>
-  store.accounts.toSorted((a, b) => a.name.localeCompare(b.name))
+  accountsStore.accounts.toSorted((a, b) => a.nombre.localeCompare(b.nombre))
 );
 
 //Methods
@@ -73,4 +77,36 @@ const onEditAccount = function (account) {
 const onDeleteAccount = function (account) {
   store.deleteAccount(account);
 };
+const refresh = () => {
+  loading.value = true;
+  accountsServer
+    .getAccounts()
+    .then((response) => {
+      accountsStore.accounts = response.data.results;
+    })
+    .catch((error) => {
+      if (error.response && error.response.status === 401) {
+        // EventBus.dispatch("logout");
+        authStore.logout();
+        window.location.reload();
+      } else {
+        if (error.response) {
+          errors.value = error.response.data;
+        } else {
+          errors.value = {
+            error: [
+              "Ocurrió un error de conexión con el servidor. Inténtelo de nuevo.",
+            ],
+          };
+        }
+      }
+    })
+    .finally(() => {
+      loading.value = false;
+    });
+};
+
+onMounted(() => {
+  refresh();
+});
 </script>
