@@ -9,38 +9,35 @@ export const useAuthStore = defineStore("auth", {
     },
   }),
   getters: {
-    getIsAuthenticated() {
-      return this.authData && !!this.authData.access_token;
-    },
-    getAuthData() {
-      return this.authData;
+    isAuthenticated() {
+      return this.authData && !!this.authData.accessToken;
     },
   },
   actions: {
     saveLoginData(data) {
-      localStorage.setItem("access_token", data.access_token);
-      localStorage.setItem("refresh_token", data.refresh_token);
+      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("refreshToken", data.refreshToken);
       localStorage.setItem("user", JSON.stringify(data.user));
 
       this.authData = {
-        access_token: data.access_token,
-        refresh_token: data.refresh_token,
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
         user: data.user,
       };
     },
     async logout() {
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("refresh_token");
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
       localStorage.removeItem("user");
 
       this.authData = {};
     },
     refreshToken(data) {
-      this.authData.access_token = data.access;
-      this.authData.refresh_token = data.refresh;
+      this.authData.accessToken = data.access;
+      this.authData.refreshToken = data.refresh;
 
-      localStorage.setItem("access_token", data.access);
-      localStorage.setItem("refresh_token", data.refresh);
+      localStorage.setItem("accessToken", data.access);
+      localStorage.setItem("refreshToken", data.refresh);
     },
   },
 });

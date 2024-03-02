@@ -6,7 +6,7 @@ const store = useAuthStore();
 export const setupInterceptors = (api) => {
   api.interceptors.request.use(
     (config) => {
-      const authData = store.getAuthData;
+      const authData = store.authData;
       if (
         authData.access_token &&
         !config.url.includes("login") &&
@@ -34,7 +34,7 @@ export const setupInterceptors = (api) => {
       ) {
         // Access Token was expired
         if (err.response.status === 401) {
-          const authData = store.getAuthData;
+          const authData = store.authData;
           try {
             const response = await refreshClient.post("refresh-token/", {
               refresh: authData.refresh_token,

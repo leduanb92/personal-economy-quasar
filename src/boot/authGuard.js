@@ -6,22 +6,22 @@ export default boot(({ router }) => {
     const authStore = useAuthStore();
     const authRequired = to.matched.some((record) => record.meta.authRequired);
 
-    if (!authStore.getIsAuthenticated) {
-      const access_token = localStorage.getItem("access_token");
-      const refresh_token = localStorage.getItem("refresh_token");
+    if (!authStore.isAuthenticated) {
+      const accessToken = localStorage.getItem("accessToken");
+      const refreshToken = localStorage.getItem("refreshToken");
       const userJSON = localStorage.getItem("user");
       const user = JSON.parse(userJSON);
-      if (access_token && refresh_token) {
+      if (accessToken && refreshToken) {
         const data = {
-          access_token: access_token,
-          refresh_token: refresh_token,
+          accessToken: accessToken,
+          refreshToken: refreshToken,
           user: user,
         };
         authStore.saveLoginData(data);
       }
     }
 
-    const isAuthenticated = authStore.getIsAuthenticated;
+    const isAuthenticated = authStore.isAuthenticated;
     if (!authRequired && isAuthenticated) {
       next({ name: "dashboard" });
     } else if (authRequired && !isAuthenticated) {
