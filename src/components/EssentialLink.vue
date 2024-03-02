@@ -14,7 +14,7 @@
 
     <q-item-section :class="'text-' + color">
       <q-item-label>{{ title }}</q-item-label>
-      <q-item-label caption>{{ caption }}</q-item-label>
+      <q-item-label v-if="caption" caption>{{ caption }}</q-item-label>
     </q-item-section>
   </q-item>
 </template>
