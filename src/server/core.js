@@ -8,11 +8,11 @@ export const setupInterceptors = (api) => {
     (config) => {
       const authData = store.authData;
       if (
-        authData.access_token &&
+        authData.accessToken &&
         !config.url.includes("login") &&
         !config.url.includes("logout")
       ) {
-        config.headers.setAuthorization(`Bearer ${authData.access_token}`);
+        config.headers.setAuthorization(`Bearer ${authData.accessToken}`);
       }
 
       return config;
@@ -37,7 +37,7 @@ export const setupInterceptors = (api) => {
           const authData = store.authData;
           try {
             const response = await refreshClient.post("refresh-token/", {
-              refresh: authData.refresh_token,
+              refresh: authData.refreshToken,
             });
             const data = response.data;
             await store.refreshToken(data);
