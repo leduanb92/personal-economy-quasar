@@ -86,6 +86,7 @@
       </q-card>
     </div>
     <div class="col-12 col-md-4 q-pb-lg q-pb-md-none" style="max-height: 100%">
+      <dashboard-operations-list />
     </div>
   </q-page>
 </template>
