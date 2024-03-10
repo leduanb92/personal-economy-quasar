@@ -1,6 +1,14 @@
 // app global css in SCSS form
 :root {
   --animate-duration: 0.4s !important;
+
+  @media screen and (max-width: $breakpoint-xs) {
+    font-size: 12px;
+  }
+
+  @media screen and (max-width: 375px) {
+    font-size: 10px;
+  }
 }
 
 .body--light {
