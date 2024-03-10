@@ -10,10 +10,24 @@
   </router-view>
 </template>
 
-<script>
-import { defineComponent } from "vue";
+<script setup>
+import { inject, onBeforeUnmount, onMounted } from "vue";
+import { useAuthStore } from "stores/auth-store";
 
-export default defineComponent({
-  name: "App",
+const bus = inject("bus");
+const authStore = useAuthStore();
+
+// Methods
+const logout = () => {
+  console.log("You are being logged out");
+  authStore.logout();
+  location.reload();
+};
+
+onMounted(() => {
+  bus.on("logout", logout);
+});
+onBeforeUnmount(() => {
+  bus.off("logout", logout);
 });
 </script>
