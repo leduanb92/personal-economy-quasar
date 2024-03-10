@@ -33,7 +33,7 @@
       dark
       class="bg-primary"
       :mini="miniMode"
-      :breakpoint="599"
+      :breakpoint="$q.screen.sizes.sm - 1"
       :width="210"
     >
       <q-list class="column full-height q-gutter-y-sm">
@@ -125,10 +125,6 @@ const $q = useQuasar();
 const bus = inject("bus");
 const miniMode = ref(true);
 const showDrawer = ref(true);
-
-const miniToggleIcon = computed(() => {
-  return miniMode.value ? "menu" : "arrow";
-});
 
 const currentModeIcon = computed(() => {
   return $q.dark.isActive ? "r_light_mode" : "r_dark_mode";
