@@ -1,8 +1,8 @@
 <template>
-  <div class="operation-container q-py-md q-px-sm q-hoverable">
+  <div class="operation-container q-py-sm q-px-sm q-hoverable">
     <div class="row justify-center justify-sm-between q-gutter-sm no-wrap-sm">
       <p
-        class="text-h6 text-capitalize ellipsis-2-lines"
+        class="text-h6 text-capitalize ellipsis-2-lines q-mb-none"
         :title="operation.description"
       >
         {{ operation.description }}
