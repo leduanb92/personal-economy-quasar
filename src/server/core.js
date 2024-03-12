@@ -57,7 +57,7 @@ export const setupInterceptors = (api) => {
   );
 
   const refreshClient = axios.create({
-    baseURL: "http://127.0.0.1:8036/users/",
+    baseURL: api.defaults.baseURL + "users/",
     withCredentials: false,
     headers: {
       Accept: "application/json",
