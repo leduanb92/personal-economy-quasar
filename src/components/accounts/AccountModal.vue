@@ -46,7 +46,7 @@ const form = reactive({
 });
 const errors = reactive({
   name: [],
-  general_errors: [],
+  generalErrors: [],
 });
 
 const model = computed({
@@ -74,7 +74,7 @@ const resetForm = function () {
   form.initialBalance = 0;
 };
 const cleanErrors = function () {
-  errors.general_errors = [];
+  errors.generalErrors = [];
   errors.name = [];
 };
 
@@ -89,7 +89,6 @@ const onSave = function () {
       accountsServer
         .addAccount({ ...form })
         .then(() => {
-          // this.cuentas = response.data.results;
           resetForm();
           emit("saved");
           model.value = false;
@@ -99,16 +98,15 @@ const onSave = function () {
             // EventBus.dispatch("logout");
           } else {
             const errorData = error.response.data;
-            if ("nombre" in errorData) errors.name = errorData["nombre"];
-            if ("general_errors" in errorData)
-              errors.general_errors = errorData["general_errors"];
+            if ("name" in errorData) errors.name = errorData["name"];
+            if ("generalErrors" in errorData)
+              errors.generalErrors = errorData["generalErrors"];
           }
         });
     } else {
       accountsServer
         .updateAccount(form.id, { ...form })
         .then(() => {
-          // this.cuentas = response.data.results;
           resetForm();
           emit("saved");
           model.value = false;
@@ -118,9 +116,9 @@ const onSave = function () {
             // EventBus.dispatch("logout");
           } else {
             const errorData = error.response.data;
-            if ("nombre" in errorData) errors.name = errorData["nombre"];
-            if ("general_errors" in errorData)
-              errors.general_errors = errorData["general_errors"];
+            if ("name" in errorData) errors.name = errorData["name"];
+            if ("generalErrors" in errorData)
+              errors.generalErrors = errorData["generalErrors"];
           }
         });
     }
@@ -129,7 +127,7 @@ const onSave = function () {
 const validate = function () {
   cleanErrors();
   if (!form.name) {
-    errors.name = ["Name is required"];
+    errors.name = ["You must specify an account name."];
     return false;
   }
   return true;

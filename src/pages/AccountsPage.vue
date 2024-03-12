@@ -56,7 +56,7 @@ const messageTimeout = ref(4000);
 const errors = ref({});
 
 const accounts = computed(() =>
-  accountsStore.accounts.toSorted((a, b) => a.nombre.localeCompare(b.nombre))
+  accountsStore.accounts.toSorted((a, b) => a.name.localeCompare(b.name))
 );
 
 //Methods
@@ -89,7 +89,7 @@ const onDeleteAccount = function (account) {
       } else {
         const errorData = error.response.data;
         message.value =
-          errorData["general_errors"] ||
+          errorData["generalErrors"] ||
           errorData["message"] ||
           "There was an error deleting the account";
         showMessage.value = true;
@@ -114,7 +114,7 @@ const refresh = () => {
         } else {
           errors.value = {
             error: [
-              "Ocurrió un error de conexión con el servidor. Inténtelo de nuevo.",
+              "There was an error loading your accounts. Please, refresh the page.",
             ],
           };
         }
