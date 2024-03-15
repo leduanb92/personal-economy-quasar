@@ -1,27 +1,47 @@
 <template>
   <q-dialog v-model="model" persistent>
-    <q-card style="min-width: 350px" @keyup.enter="onSave">
+    <q-card style="min-width: 250px; width: 400px" @keyup.enter="onSave">
       <q-card-section>
-        <div class="text-h6">Add account</div>
+        <div class="text-h6">{{ title }}</div>
       </q-card-section>
 
       <q-card-section class="q-pt-none">
-        <q-input dense v-model="form.name" autofocus />
+        <q-input
+          dense
+          v-model="form.name"
+          :error="!!errors.name.length"
+          :error-message="errors.name.join('. ')"
+          autocapitalize="words"
+          bottom-slots
+          autofocus
+        />
         <q-input dense v-model="form.initialBalance" type="number" />
       </q-card-section>
 
-      <q-card-actions align="right" class="text-primary">
+      <q-card-actions align="right" class="row no-wrap text-primary">
+        <span
+          v-if="errors.generalErrors.length"
+          class="text-negative text-caption ellipsis-3-lines q-mr-md"
+        >
+          {{ errors.generalErrors.join(". ") }}
+        </span>
+        <q-space />
         <q-btn
           v-close-popup
           flat
+          no-wrap
+          style="flex-shrink: 0"
           icon="r_close"
           label="Cancel"
           @click="onCancel"
         />
         <q-btn
           flat
+          no-wrap
+          style="flex-shrink: 0"
           :icon="account ? 'r_save' : 'r_add'"
           :label="account ? 'Save' : 'Add'"
+          :loading="loading"
           @click="onSave"
         />
       </q-card-actions>
@@ -30,15 +50,17 @@
 </template>
 
 <script setup>
-import { computed, reactive, watchEffect } from "vue";
+import { computed, inject, reactive, ref, watchEffect } from "vue";
 import accountsServer from "src/server/accounts";
 
 const emit = defineEmits(["update:modelValue", "saved", "cancelled"]);
+const bus = inject("bus");
 const props = defineProps({
   modelValue: Boolean,
   account: { type: Object, default: null },
 });
 
+const loading = ref(false);
 const form = reactive({
   id: "",
   name: "",
@@ -49,6 +71,13 @@ const errors = reactive({
   generalErrors: [],
 });
 
+//Computed
+const title = computed(() => {
+  if (props.account) {
+    return `Edit Account (${props.account.name})`;
+  }
+  return "Add Account";
+});
 const model = computed({
   get() {
     return props.modelValue;
@@ -80,14 +109,18 @@ const cleanErrors = function () {
 
 const onCancel = function () {
   resetForm();
+  cleanErrors();
   emit("cancelled");
 };
 
 const onSave = function () {
   if (validate()) {
+    loading.value = true;
+    const name =
+      form.name.trim().charAt(0).toUpperCase() + form.name.trim().slice(1);
     if (!props.account) {
       accountsServer
-        .addAccount({ ...form })
+        .addAccount({ ...form, name: name })
         .then(() => {
           resetForm();
           emit("saved");
@@ -95,14 +128,15 @@ const onSave = function () {
         })
         .catch((error) => {
           if (error.response && error.response.status === 401) {
-            // EventBus.dispatch("logout");
+            bus.emit("logout");
           } else {
             const errorData = error.response.data;
             if ("name" in errorData) errors.name = errorData["name"];
             if ("generalErrors" in errorData)
               errors.generalErrors = errorData["generalErrors"];
           }
-        });
+        })
+        .finally(() => (loading.value = false));
     } else {
       accountsServer
         .updateAccount(form.id, { ...form })
@@ -113,14 +147,15 @@ const onSave = function () {
         })
         .catch((error) => {
           if (error.response && error.response.status === 401) {
-            // EventBus.dispatch("logout");
+            bus.emit("logout");
           } else {
             const errorData = error.response.data;
             if ("name" in errorData) errors.name = errorData["name"];
             if ("generalErrors" in errorData)
               errors.generalErrors = errorData["generalErrors"];
           }
-        });
+        })
+        .finally(() => (loading.value = false));
     }
   }
 };
