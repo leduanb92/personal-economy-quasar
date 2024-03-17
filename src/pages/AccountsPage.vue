@@ -55,6 +55,7 @@ const accountModal = reactive({
   account: null,
 });
 const loading = ref(false);
+const loadingMessage = ref("Loading accounts...");
 const showMessage = ref(false);
 const message = ref("");
 const messageType = ref("positive");
@@ -67,11 +68,12 @@ const accounts = computed(() =>
 watch(loading, () => {
   if (loading.value) {
     workspaceStore.showLoading({
-      message: "Loading accounts...",
+      message: loadingMessage.value,
       delay: 700,
     });
   } else {
     workspaceStore.hideLoading();
+    loadingMessage.value = "Loading accounts...";
   }
 });
 watch(showMessage, () => {
@@ -125,6 +127,8 @@ const onDeleteAccount = function (account) {
   });
 };
 const deleteAccount = (account) => {
+  loadingMessage.value = `Deleting account ${account.name}...`;
+  loading.value = true;
   accountsServer
     .deleteAccount(account.id)
     .then(() => {
@@ -145,7 +149,8 @@ const deleteAccount = (account) => {
         messageType.value = "negative";
         showMessage.value = true;
       }
-    });
+    })
+    .finally(() => (loading.value = false));
 };
 const refresh = () => {
   loading.value = true;
