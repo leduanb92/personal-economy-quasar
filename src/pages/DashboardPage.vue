@@ -85,7 +85,7 @@
 import { useAuthStore } from "stores/auth-store";
 import { computed, inject, onMounted, ref } from "vue";
 import accountsServer from "src/server/accounts";
-import DashboardOperationsList from "components/Dashboard/DashboardOperationsList.vue";
+import DashboardOperationsList from "components/dashboard/DashboardOperationsList.vue";
 
 const authStore = useAuthStore();
 const bus = inject("bus");

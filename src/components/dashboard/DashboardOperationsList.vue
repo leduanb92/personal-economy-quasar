@@ -2,15 +2,7 @@
   <q-card class="full-height column no-wrap" style="min-height: 15.625rem">
     <q-card-section class="column q-pa-none">
       <div
-        class="
-          row
-          items-center
-          bg-primary
-          border-radius-inherit
-          q-px-md q-py-xs
-          text-white
-          shadow-1
-        "
+        class="row items-center bg-primary border-radius-inherit q-px-md q-py-xs text-white shadow-1"
       >
         <div class="text-h6">Operations</div>
         <q-space />
@@ -34,26 +26,12 @@
         </div>
       </div>
       <div
-        class="
-          week-days
-          row
-          justify-evenly
-          items-center
-          q-py-sm q-px-xs
-          shadow-1
-        "
+        class="week-days row justify-evenly items-center q-py-sm q-px-xs shadow-1"
       >
         <div
           v-for="day in weekDays"
           :key="day.toISO()"
-          class="
-            week-days__day
-            column
-            items-center
-            text-h6 text-primary text-center
-            cursor-pointer
-            q-pa-sm
-          "
+          class="week-days__day column items-center text-h6 text-primary text-center cursor-pointer q-pa-sm"
           :class="{ selected: selectedDate.equals(day) }"
           @click="selectedDate = day"
         >
@@ -82,7 +60,7 @@ import { computed, inject, onMounted, ref, watch } from "vue";
 import { DateTime } from "luxon";
 import operationsServer from "src/server/operations";
 import { debounce } from "quasar";
-import DashboardOperationsListItem from "components/Dashboard/DashboardOperationsListItem.vue";
+import DashboardOperationsListItem from "components/dashboard/DashboardOperationsListItem.vue";
 
 const bus = inject("bus");
 const selectedDate = ref(DateTime.now().startOf("day"));
@@ -131,7 +109,7 @@ watch(selectedDate, () => {
 });
 
 onMounted(() => {
-  fetchData = debounce(fetchData, 1000);
+  fetchData = debounce(fetchData, 700);
   fetchData();
 });
 </script>
