@@ -113,6 +113,22 @@ const onCancel = function () {
   emit("cancelled");
 };
 
+const manageErrors = function (error) {
+  if (error.response && error.response.status === 401) {
+    bus.emit("logout");
+  } else {
+    if (!error.response)
+      errors.generalErrors = [
+        "There was a network error. Please, check your connection",
+      ];
+    else {
+      const errorData = error.response.data;
+      if ("name" in errorData) errors.name = errorData["name"];
+      if ("generalErrors" in errorData)
+        errors.generalErrors = errorData["generalErrors"];
+    }
+  }
+};
 const onSave = function () {
   if (validate()) {
     loading.value = true;
@@ -126,16 +142,7 @@ const onSave = function () {
           emit("saved");
           model.value = false;
         })
-        .catch((error) => {
-          if (error.response && error.response.status === 401) {
-            bus.emit("logout");
-          } else {
-            const errorData = error.response.data;
-            if ("name" in errorData) errors.name = errorData["name"];
-            if ("generalErrors" in errorData)
-              errors.generalErrors = errorData["generalErrors"];
-          }
-        })
+        .catch(manageErrors)
         .finally(() => (loading.value = false));
     } else {
       accountsServer
@@ -145,16 +152,7 @@ const onSave = function () {
           emit("saved");
           model.value = false;
         })
-        .catch((error) => {
-          if (error.response && error.response.status === 401) {
-            bus.emit("logout");
-          } else {
-            const errorData = error.response.data;
-            if ("name" in errorData) errors.name = errorData["name"];
-            if ("generalErrors" in errorData)
-              errors.generalErrors = errorData["generalErrors"];
-          }
-        })
+        .catch(manageErrors)
         .finally(() => (loading.value = false));
     }
   }
