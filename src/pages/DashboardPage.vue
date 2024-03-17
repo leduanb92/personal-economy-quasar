@@ -1,11 +1,6 @@
 <template>
   <q-page
-    class="
-      row
-      justify-center
-      items-stretch
-      q-pa-lg q-col-gutter-md-x-md q-col-gutter-y-md q-col-gutter-md-y-none
-    "
+    class="row justify-center items-stretch q-pa-lg q-col-gutter-md-x-md q-col-gutter-y-md q-col-gutter-md-y-none"
     style="max-height: calc(100vh - 50px); height: calc(100vh - 50px)"
   >
     <div class="column col-12 col-md-8 q-gutter-y-md">
@@ -20,7 +15,7 @@
           <div class="text-h6">Have a nice day</div>
         </q-card-section>
         <q-img
-          src="src/assets/app-wallet.png"
+          src="~assets/app-wallet.png"
           width="20%"
           initial-ratio="1"
           class="absolute-bottom-right"
@@ -28,12 +23,7 @@
         ></q-img>
       </q-card>
       <div
-        class="
-          row
-          justify-between
-          items-stretch
-          q-mt-none q-col-gutter-x-md q-col-gutter-y-md
-        "
+        class="row justify-between items-stretch q-mt-none q-col-gutter-x-md q-col-gutter-y-md"
       >
         <div class="col-12 col-sm-6">
           <q-card class="text-center">
