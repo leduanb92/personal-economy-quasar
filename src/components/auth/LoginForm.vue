@@ -45,6 +45,12 @@
           @click="login"
           >Accept
         </q-btn>
+        <span class="q-mt-md text-white">Don't have an account?</span>
+        <span
+          class="create-account-link text-white cursor-pointer text-weight-medium"
+          @click="$emit('show-registration')"
+          >Create one</span
+        >
       </q-form>
     </q-card-section>
     <q-card-section
@@ -84,6 +90,7 @@ import { useAuthStore } from "stores/auth-store";
 import { useRouter } from "vue-router";
 import authServer from "src/server/auth";
 
+const $emit = defineEmits(["show-registration"]);
 const authStore = useAuthStore();
 const router = useRouter();
 
@@ -139,12 +146,17 @@ const login = async () => {
   position: relative;
   word-break: normal;
   transform: translateY(-20px);
+  border-radius: $generic-border-radius !important;
 }
 .login-form {
   flex-grow: 1;
 
   :deep(.q-form) {
     flex-grow: 1;
+  }
+
+  .create-account-link:hover {
+    text-decoration: underline;
   }
 }
 </style>

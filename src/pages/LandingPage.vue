@@ -1,7 +1,7 @@
 <template>
   <q-page class="home-page flex flex-center q-px-xl q-py-md">
     <div class="row justify-center" style="row-gap: 40px">
-      <div class="col-10 col-md-6 text-center flex flex-center q-px-lg">
+      <div class="col-10 col-md-6 text-center flex content-center q-px-lg">
         <h1 class="text-h3 q-my-none">
           Manage your money with Personal Economy
         </h1>
@@ -9,25 +9,15 @@
           color="white"
           size="0.125rem"
           class="full-width"
-          spaced
+          spaced="lg"
         ></q-separator>
         <p class="text-justify text-subtitle1">
           Welcome, with us you will be able to manage your different money
-          accounts and save the operations you make in them. You will also be
+          accounts and save the operations you make on them. You will also be
           able to save information about your debts, either as a debtor or
-          creditor. Don't wait any longer, sign up and start taking your economy
-          now.
+          creditor. Don't wait any longer, sign up and start driving your
+          economy yourself.
         </p>
-        <q-btn
-          class="full-width q-mt-md"
-          color="white"
-          text-color="primary"
-          size="lg"
-          padding="sm lg"
-          rounded
-          :label="showLoginForm ? 'Sign up' : 'Sign in'"
-          @click="showLoginForm = !showLoginForm"
-        />
       </div>
       <div class="col-12 col-md-6 text-center flex flex-center q-px-md">
         <transition
@@ -36,8 +26,11 @@
           duration="300"
           mode="out-in"
         >
-          <login-form v-if="showLoginForm" />
-          <register-form v-else />
+          <login-form
+            v-if="showLoginForm"
+            @show-registration="showLoginForm = false"
+          />
+          <register-form v-else @show-login="showLoginForm = true" />
         </transition>
       </div>
     </div>

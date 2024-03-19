@@ -8,7 +8,7 @@
       </div>
     </q-card-section>
     <q-card-section class="login-form">
-      <q-form class="px-0 text-white">
+      <q-form class="px-0 text-white column">
         <q-input
           v-model="form.username"
           label="Username"
@@ -70,6 +70,12 @@
           @click="register"
           >Accept
         </q-btn>
+        <span class="q-mt-md text-white">Already have an account?</span>
+        <span
+          class="goto-login-link text-white cursor-pointer text-weight-medium"
+          @click="$emit('show-login')"
+          >Log in instead</span
+        >
       </q-form>
     </q-card-section>
     <q-slide-transition appear>
@@ -91,6 +97,7 @@ import { useAuthStore } from "stores/auth-store";
 import { useRouter } from "vue-router";
 import authServer from "src/server/auth";
 
+const $emit = defineEmits(["show-login"]);
 const authStore = useAuthStore();
 const router = useRouter();
 
@@ -129,16 +136,21 @@ const register = async () => {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .card-title {
   position: relative;
   word-break: normal;
   transform: translateY(-20px);
+  border-radius: $generic-border-radius !important;
 }
 .form-card {
   background-color: rgba(255, 255, 255, 0.15);
   min-width: 240px;
   width: 100%;
   max-width: 360px;
+}
+
+.goto-login-link:hover {
+  text-decoration: underline;
 }
 </style>
