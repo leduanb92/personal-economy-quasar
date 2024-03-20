@@ -133,7 +133,7 @@ onMounted(() => {
   width: 100%;
 }
 .chart-card {
-  min-height: 12.5rem;
+  min-height: 10.3125rem;
   flex-grow: 1;
 }
 </style>
