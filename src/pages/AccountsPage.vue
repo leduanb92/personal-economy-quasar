@@ -8,13 +8,14 @@
       <div v-else class="q-pa-md q-gutter-md flex flex-center">
         <transition-group
           enter-active-class="animated fadeIn"
-          leave-active-class="animated fadeOutDown absolute"
-          move-class="in-motion"
+          leave-active-class="animated fadeOutDown card-leaving transition-all"
+          move-class="transition-all"
           appear
         >
           <account-card
             v-for="account in accounts"
             :key="account.id"
+            :id="'account-' + account.id"
             :account="account"
             @edit="onEditAccount(account)"
             @delete="onDeleteAccount(account)"
@@ -60,6 +61,10 @@ const showMessage = ref(false);
 const message = ref("");
 const messageType = ref("positive");
 const messageDelay = ref(3000);
+const deletingPosition = reactive({
+  x: 0,
+  y: 0,
+});
 
 const accounts = computed(() =>
   accountsStore.accounts.toSorted((a, b) => a.name.localeCompare(b.name))
@@ -127,6 +132,7 @@ const onDeleteAccount = function (account) {
   });
 };
 const deleteAccount = (account) => {
+  setElementOffset(account);
   loadingMessage.value = `Deleting account ${account.name}...`;
   loading.value = true;
   accountsServer
@@ -179,7 +185,23 @@ const refresh = () => {
     });
 };
 
+const setElementOffset = (account) => {
+  const el = document.getElementById("account-" + account.id);
+  if (el) {
+    deletingPosition.x = el.offsetLeft;
+    deletingPosition.y = el.offsetTop;
+  }
+};
+
 onMounted(() => {
   refresh();
 });
 </script>
+
+<style scoped lang="scss">
+.card-leaving {
+  position: absolute;
+  left: v-bind("deletingPosition.x + 'px'");
+  top: v-bind("deletingPosition.y + 'px'");
+}
+</style>
