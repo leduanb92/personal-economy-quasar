@@ -6,12 +6,17 @@
     <div class="column col-12 col-md-8 q-gutter-y-md">
       <q-card
         dark
-        class="home-card bg-primary q-px-none q-px-md-md q-py-sm q-py-sm-md"
+        class="home-card bg-primary q-px-none q-px-md-md q-py-sm q-py-sm-md column justify-center"
       >
-        <q-card-section class="q-py-xs q-pt-sm-md">
-          <div class="text-h4 text-bold">Welcome {{ userName }}!</div>
+        <q-card-section class="q-py-xs-none q-py-sm-xs">
+          <div
+            class="text-bold"
+            :class="$q.screen.name === 'xs' ? 'text-h5' : 'text-h4'"
+          >
+            Welcome {{ userName }}!
+          </div>
         </q-card-section>
-        <q-card-section class="q-pt-none">
+        <q-card-section class="q-py-none">
           <div class="text-h6">Have a nice day</div>
         </q-card-section>
         <q-img
@@ -84,9 +89,11 @@
 <script setup>
 import { useAuthStore } from "stores/auth-store";
 import { computed, inject, onMounted, ref } from "vue";
+import { useQuasar } from "quasar";
 import accountsServer from "src/server/accounts";
 import DashboardOperationsList from "components/dashboard/DashboardOperationsList.vue";
 
+const $q = useQuasar();
 const authStore = useAuthStore();
 const bus = inject("bus");
 const totalBalance = ref(0);
@@ -122,7 +129,7 @@ onMounted(() => {
 
 <style>
 .home-card {
-  height: 9.375rem;
+  height: 7.75rem;
   width: 100%;
 }
 .chart-card {

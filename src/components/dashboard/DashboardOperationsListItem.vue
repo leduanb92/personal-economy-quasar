@@ -35,4 +35,8 @@ const amountClass = computed(() => {
 });
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.operation-container:not(:last-child) {
+  border-bottom: 2px dashed $grey-6;
+}
+</style>

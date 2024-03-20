@@ -6,7 +6,7 @@
       >
         <div class="text-h6">Operations</div>
         <q-space />
-        <div class="text-caption cursor-pointer">
+        <div class="text-caption cursor-pointer flex items-center">
           <span>{{
             selectedDate.toLocaleString({
               month: "long",
