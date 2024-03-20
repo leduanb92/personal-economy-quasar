@@ -109,7 +109,7 @@ const onEditAccount = function (account) {
 
 const onDeleteAccount = function (account) {
   workspaceStore.showConfirmDialog({
-    title: "Delete Account",
+    title: "Delete Account: " + account.name,
     message: "Are you sure you want to delete this account?",
     ok: {
       label: "Delete",

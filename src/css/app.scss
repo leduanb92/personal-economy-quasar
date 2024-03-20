@@ -2,7 +2,7 @@
 :root {
   --animate-duration: 0.4s !important;
 
-  @media screen and (max-width: $breakpoint-xs) {
+  @media screen and (max-width: $breakpoint-xs-max) {
     font-size: 12px;
   }
 
