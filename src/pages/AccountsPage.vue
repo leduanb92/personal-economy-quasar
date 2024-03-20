@@ -23,7 +23,7 @@
       </div>
     </transition>
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
-      <q-btn fab icon="r_add" color="primary" @click="toggleModal" />
+      <q-btn fab icon="r_add" color="secondary" @click="toggleModal" />
     </q-page-sticky>
     <account-modal
       v-model="accountModal.value"

@@ -1,27 +1,37 @@
 <template>
-  <q-card class="account-card bg-primary text-white">
-    <q-card-section class="flex flex-center column">
-      <div class="text-h6">{{ account.name }}</div>
+  <q-card class="account-card column">
+    <q-card-section class="flex flex-center q-py-sm" style="flex-grow: 1">
+      <div class="text-h6 ellipsis-2-lines q-pt-sm">{{ account.name }}</div>
+    </q-card-section>
+    <q-card-section
+      class="flex flex-center bg-primary text-white q-py-sm"
+      style="
+        border-bottom-left-radius: inherit;
+        border-bottom-right-radius: inherit;
+      "
+    >
       <div class="text-subtitle2">
         Balance: ${{ account.balance ?? account.initialBalance }}
       </div>
     </q-card-section>
-    <q-card-actions align="right">
+    <div class="account-actions absolute-top-right hidden">
       <q-btn
         flat
+        round
         size="sm"
-        color="white"
+        color="primary"
         icon="r_edit"
         @click="emit('edit', account)"
       />
       <q-btn
         flat
+        round
         size="sm"
-        color="white"
+        color="negative"
         icon="r_delete"
         @click="emit('delete', account)"
       />
-    </q-card-actions>
+    </div>
   </q-card>
 </template>
 
@@ -32,9 +42,14 @@ const props = defineProps({
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .account-card {
   width: 200px;
   max-width: 200px;
+  min-height: 130px;
+
+  &:hover .account-actions {
+    display: block !important;
+  }
 }
 </style>
