@@ -10,9 +10,7 @@ export default {
     return api.get(baseUrl + id + "/");
   },
   addOperation(data) {
-    return api.post(baseUrl, {
-      nombre: data.name,
-    });
+    return api.post(baseUrl, data);
   },
   updateOperation(id, data) {
     return api.put(baseUrl + id + "/", data);

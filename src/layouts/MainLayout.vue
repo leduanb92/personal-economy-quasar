@@ -119,6 +119,13 @@ const links = reactive([
     color: "white",
     link: { name: "account-list" },
   },
+  {
+    title: "Operations",
+    caption: "",
+    icon: "r_assignment",
+    color: "white",
+    link: { name: "operation-list" },
+  },
 ]);
 
 const $q = useQuasar();
