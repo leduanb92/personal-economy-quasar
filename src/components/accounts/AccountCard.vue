@@ -7,7 +7,10 @@
       >
         {{ account.name }}
       </div>
-      <div class="account-actions absolute-top-right hidden">
+      <div
+        class="account-actions absolute-top-right"
+        :class="{ hidden: !$q.platform.is.mobile }"
+      >
         <q-btn
           flat
           round
