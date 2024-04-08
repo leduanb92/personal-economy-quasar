@@ -1,5 +1,5 @@
 <template>
-  <q-page class="flex column flex-center">
+  <q-page class="flex column flex-center q-pa-lg">
     <transition enter-active-class="animated fadeIn" mode="out-in">
       <div v-if="!accounts.length && !loading" class="flex column flex-center">
         <q-icon name="r_wallet" size="76px" color="primary"></q-icon>
