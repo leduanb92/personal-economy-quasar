@@ -1,5 +1,8 @@
 <template>
-  <q-page class="column flex-center q-pa-lg">
+  <q-page
+    class="column flex-center q-pa-lg"
+    style="max-height: calc(100vh - 50px)"
+  >
     <q-table
       title="Operations"
       row-key="id"
@@ -7,25 +10,77 @@
       :columns="columns"
       :loading="loading"
       :grid="$q.screen.xs"
+      v-model:selected="selectedOps"
+      :selection="selectionType"
+      :pagination="{ rowsPerPage: 20 }"
       class="operations-table shadow-2 rounded-borders full-width"
-      style="flex-grow: 1"
+      style="flex-grow: 1; min-height: 20rem"
       card-container-class="justify-center"
       wrap-cells
+      @row-contextmenu="
+        (evt, row) => {
+          toggleRowSelection(evt, row);
+        }
+      "
+      @row-click="
+        (evt, row) => {
+          toggleRowSelection(evt, row, true);
+        }
+      "
     >
       <template v-slot:top-right>
         <q-btn
+          v-if="selectionType !== 'none'"
+          round
+          flat
+          color="primary"
+          icon="r_done"
+          padding="xs"
+          @click="clearSelection"
+        />
+        <q-btn
+          v-if="selectedOps.length > 0"
+          round
+          flat
+          size="sm"
+          color="negative"
+          icon="r_delete"
+          @click="onDeleteOperation(selectedOps[0])"
+        />
+        <q-btn
+          v-if="showEditButton"
+          round
+          flat
+          size="sm"
+          color="primary"
+          icon="r_edit"
+          @click="toggleModal(true)"
+        />
+        <q-btn
+          round
+          flat
           color="primary"
           icon="r_add"
-          label="Add"
-          @click="operationModal.value = true"
+          padding="xs"
+          @click="toggleModal"
         />
       </template>
       <template v-slot:body-cell-description="props">
-        <q-td :props="props" class="flex items-center">
+        <q-td :props="props">
           <div class="ellipsis-2-lines">{{ props.row.description }}</div>
         </q-td>
       </template>
     </q-table>
+    <operation-modal
+      v-model="operationModal.value"
+      :operation="operationModal.operation"
+      @saved="onSavedOperation"
+      @cancelled="
+        () => {
+          operationModal.operation = null;
+        }
+      "
+    />
   </q-page>
 </template>
 
@@ -34,6 +89,8 @@ import { computed, inject, onMounted, reactive, ref, watch } from "vue";
 import { useOperationsStore } from "stores/operations-store";
 import { useWorkspaceStore } from "stores/workspace-store";
 import operationsServer from "src/server/operations";
+import OperationModal from "components/operations/OperationModal.vue";
+import OperationCard from "components/operations/OperationCard.vue";
 import { DateTime } from "luxon";
 import { useQuasar } from "quasar";
 
@@ -46,6 +103,7 @@ const operationModal = reactive({
   value: false,
   operation: null,
 });
+const selectionType = ref("none");
 const loading = ref(false);
 const loadingMessage = ref("Loading operations...");
 const showMessage = ref(false);
@@ -93,9 +151,12 @@ const columns = reactive([
   },
 ]);
 
+const selectedOps = ref([]);
+
 const operations = computed(() =>
   operationsStore.operations.toSorted((a, b) => a.date.localeCompare(b.date))
 );
+const showEditButton = computed(() => selectedOps.value.length === 1);
 
 watch(loading, () => {
   if (loading.value) {
@@ -123,7 +184,8 @@ watch(showMessage, () => {
 });
 
 //Methods
-const toggleModal = function () {
+const toggleModal = function (isEdit = false) {
+  operationModal.operation = isEdit ? selectedOps.value[0] : null;
   operationModal.value = !operationModal.value;
 };
 const onSavedOperation = function (operation) {
@@ -220,13 +282,30 @@ const setElementOffset = (operation) => {
   }
 };
 
+const toggleRowSelection = (evt, row, checkSelectionActive = false) => {
+  if (checkSelectionActive) {
+    if (selectionType.value === "none") {
+      return;
+    }
+  }
+  evt.preventDefault();
+  const index = selectedOps.value.indexOf(row);
+  if (index > -1) {
+    selectedOps.value.splice(index, 1);
+  } else {
+    selectedOps.value.push(row);
+  }
+  selectionType.value = "multiple";
+};
+
+const clearSelection = () => {
+  selectedOps.value = [];
+  selectionType.value = "none";
+};
+
 onMounted(() => {
   refresh();
 });
 </script>
 
-<style scoped lang="scss">
-.operations-table :deep(tbody tr) {
-  vertical-align: top;
-}
-</style>
+<style scoped lang="scss"></style>
