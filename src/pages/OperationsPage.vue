@@ -90,7 +90,7 @@ import { useOperationsStore } from "stores/operations-store";
 import { useWorkspaceStore } from "stores/workspace-store";
 import operationsServer from "src/server/operations";
 import OperationModal from "components/operations/OperationModal.vue";
-import OperationCard from "components/operations/OperationCard.vue";
+// import OperationCard from "components/operations/OperationCard.vue";
 import { DateTime } from "luxon";
 import { useQuasar } from "quasar";
 
