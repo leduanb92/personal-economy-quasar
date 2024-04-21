@@ -1,5 +1,5 @@
 <template>
-  <q-card class="q-mt-16 form-card" key="login">
+  <q-card class="q-mt-16 form-card" key="register" @keyup.enter="register">
     <q-card-section class="card-title q-mx-xl q-pa-none bg-white">
       <div class="shadow-3 bg-white q-py-sm rounded-borders">
         <q-space></q-space>

@@ -24,7 +24,11 @@
           width="20%"
           initial-ratio="1"
           class="absolute-bottom-right"
-          style="margin: 0 -1.5rem -1.25rem 0"
+          style="
+            margin: 0 -1.5rem -1.25rem 0;
+            max-width: 140px;
+            min-width: 50px;
+          "
         ></q-img>
       </q-card>
       <div
