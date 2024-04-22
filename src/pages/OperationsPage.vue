@@ -62,7 +62,7 @@
           color="primary"
           icon="r_add"
           padding="xs"
-          @click="toggleModal"
+          @click="toggleModal()"
         />
       </template>
       <template v-slot:body-cell-description="props">
@@ -196,11 +196,6 @@ const onSavedOperation = function (operation) {
   refresh();
 };
 
-const onEditOperation = function (operation) {
-  operationModal.operation = operation;
-  operationModal.value = true;
-};
-
 const onDeleteOperation = function (operation) {
   workspaceStore.showConfirmDialog({
     title: "Delete Operation",
@@ -221,7 +216,6 @@ const onDeleteOperation = function (operation) {
   });
 };
 const deleteOperation = (operation) => {
-  // setElementOffset(operation);
   loadingMessage.value = `Deleting operation...`;
   loading.value = true;
   operationsServer
@@ -230,6 +224,7 @@ const deleteOperation = (operation) => {
       message.value = "The operation was deleted successfully";
       messageType.value = "positive";
       showMessage.value = true;
+      clearSelection(false);
       refresh();
     })
     .catch((error) => {
@@ -274,14 +269,6 @@ const refresh = () => {
     });
 };
 
-const setElementOffset = (operation) => {
-  const el = document.getElementById("operation-" + operation.id);
-  if (el) {
-    deletingPosition.x = el.offsetLeft;
-    deletingPosition.y = el.offsetTop;
-  }
-};
-
 const toggleRowSelection = (evt, row, checkSelectionActive = false) => {
   if (checkSelectionActive) {
     if (selectionType.value === "none") {
@@ -289,7 +276,7 @@ const toggleRowSelection = (evt, row, checkSelectionActive = false) => {
     }
   }
   evt.preventDefault();
-  const index = selectedOps.value.indexOf(row);
+  const index = selectedOps.value.findIndex((e) => e.id === row.id);
   if (index > -1) {
     selectedOps.value.splice(index, 1);
   } else {
@@ -298,9 +285,11 @@ const toggleRowSelection = (evt, row, checkSelectionActive = false) => {
   selectionType.value = "multiple";
 };
 
-const clearSelection = () => {
+const clearSelection = (deactivate = true) => {
   selectedOps.value = [];
-  selectionType.value = "none";
+  if (deactivate) {
+    selectionType.value = "none";
+  }
 };
 
 onMounted(() => {

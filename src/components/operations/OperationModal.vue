@@ -6,23 +6,56 @@
       </q-card-section>
 
       <q-card-section class="q-pt-none">
+        <q-btn-toggle
+          v-model="form.type"
+          spread
+          class="q-my-xs"
+          rounded
+          :toggle-color="form.type === 'In' ? 'positive' : 'negative'"
+          color="white"
+          text-color="primary"
+          :options="types"
+        />
         <q-select
-          dense
           v-model="form.account"
           :options="accounts"
           :loading="loadingAccounts"
-        />
-        <q-select dense v-model="form.type" :options="types" />
-        <q-input
+          label="Account"
           dense
+        />
+        <q-input
           v-model="form.amount"
           :error="!!errors.amount.length"
           :error-message="errors.amount.join('. ')"
-          bottom-slots
+          label="Amount"
           type="number"
           min="0"
+          :hide-bottom-space="!errors.amount.length"
+          dense
         />
-        <q-input dense v-model="form.description" />
+        <q-input
+          v-model="formattedDate"
+          mask="##-##-####"
+          label="Date (MM-DD-YYYY)"
+          dense
+        >
+          <template v-slot:append>
+            <q-icon name="r_event" class="cursor-pointer">
+              <q-popup-proxy
+                cover
+                transition-show="scale"
+                transition-hide="scale"
+              >
+                <q-date v-model="form.date" mask="YYYY-MM-DD">
+                  <div class="row flex-center">
+                    <q-btn v-close-popup label="Close" color="primary" flat />
+                  </div>
+                </q-date>
+              </q-popup-proxy>
+            </q-icon>
+          </template>
+        </q-input>
+        <q-input v-model="form.description" label="Description" dense />
       </q-card-section>
 
       <q-card-actions align="right" class="row no-wrap text-primary">
@@ -58,6 +91,7 @@
 
 <script setup>
 import { computed, inject, reactive, ref, watchEffect, onMounted } from "vue";
+import { DateTime } from "luxon";
 import { useAccountsStore } from "stores/accounts-store";
 import operationsServer from "src/server/operations";
 import accountsServer from "src/server/accounts";
@@ -75,7 +109,8 @@ const loadingAccounts = ref(false);
 const form = reactive({
   id: "",
   account: null,
-  type: { value: "Exp", label: "Expense" },
+  type: "Exp",
+  date: DateTime.now().toISODate(),
   amount: 0,
   description: "",
 });
@@ -116,12 +151,26 @@ const model = computed({
   },
 });
 
+const formattedDate = computed({
+  get() {
+    return DateTime.fromISO(form.date).toFormat("MM-dd-yyyy");
+  },
+  set(value) {
+    form.date = DateTime.fromFormat(value, "MM-dd-yyyy").toISODate();
+  },
+});
+
 //Watchers
 watchEffect(() => {
   if (props.operation) {
     form.id = props.operation.id;
-    form.account = props.operation.account;
-    form.type = types.find((type) => type.value === props.operation.type);
+    form.account = {
+      value: props.operation.account?.id,
+      label: props.operation.account?.name,
+      data: props.operation.account,
+    };
+    form.type = props.operation.type;
+    form.date = props.operation.date;
     form.amount = props.operation.amount;
     form.description = props.operation.description;
   }
@@ -131,7 +180,8 @@ watchEffect(() => {
 const resetForm = function () {
   form.id = "";
   form.account = null;
-  form.type = { value: "Exp", label: "Expense" };
+  form.type = "Exp";
+  form.date = DateTime.now().toISODate();
   form.amount = 0;
   form.description = "";
 };
@@ -168,11 +218,9 @@ const onSave = function () {
   if (validate()) {
     loading.value = true;
     const account = form.account?.value;
-    const type = form.type.value;
-    const date = new Date().toISOString().slice(0, 10);
     if (!props.operation) {
       operationsServer
-        .addOperation({ ...form, account, type, date })
+        .addOperation({ ...form, account })
         .then(() => {
           resetForm();
           emit("saved");
@@ -182,12 +230,7 @@ const onSave = function () {
         .finally(() => (loading.value = false));
     } else {
       operationsServer
-        .updateOperation(form.id, {
-          ...form,
-          account,
-          type,
-          date,
-        })
+        .updateOperation(form.id, { ...form, account })
         .then(() => {
           resetForm();
           emit("saved");
