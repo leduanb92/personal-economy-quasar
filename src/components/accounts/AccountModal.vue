@@ -11,11 +11,17 @@
           v-model="form.name"
           :error="!!errors.name.length"
           :error-message="errors.name.join('. ')"
+          label="Name"
           autocapitalize="words"
           bottom-slots
           autofocus
         />
-        <q-input dense v-model="form.initialBalance" type="number" />
+        <q-input
+          dense
+          v-model="form.initialBalance"
+          label="Initial Balance"
+          type="number"
+        />
       </q-card-section>
 
       <q-card-actions align="right" class="row no-wrap text-primary">
