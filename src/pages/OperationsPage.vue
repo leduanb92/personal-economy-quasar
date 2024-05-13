@@ -14,8 +14,8 @@
       :selection="selectionType"
       :pagination="{ rowsPerPage: 20 }"
       class="operations-table shadow-2 rounded-borders full-width"
-      style="flex-grow: 1; min-height: 20rem"
-      card-container-class="justify-center"
+      style="flex-grow: 1; min-height: 15rem"
+      card-container-class="justify-center overflow-auto q-gutter-md q-pa-sm"
       wrap-cells
       @row-contextmenu="
         (evt, row) => {
@@ -70,6 +70,14 @@
           <div class="ellipsis-2-lines">{{ props.row.description }}</div>
         </q-td>
       </template>
+      <template v-slot:item="props">
+        <operation-card
+          :operation="props.row"
+          :selected="props.selected"
+          @contextmenu="toggleRowSelection($event, props.row)"
+          @click="toggleRowSelection($event, props.row, true)"
+        />
+      </template>
     </q-table>
     <operation-modal
       v-model="operationModal.value"
@@ -90,7 +98,7 @@ import { useOperationsStore } from "stores/operations-store";
 import { useWorkspaceStore } from "stores/workspace-store";
 import operationsServer from "src/server/operations";
 import OperationModal from "components/operations/OperationModal.vue";
-// import OperationCard from "components/operations/OperationCard.vue";
+import OperationCard from "components/operations/OperationCard.vue";
 import { DateTime } from "luxon";
 import { useQuasar } from "quasar";
 
