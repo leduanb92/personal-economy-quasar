@@ -1,0 +1,9 @@
+{
+  "appId": "com.leduanb.personaleconomy",
+  "appName": "Personal Economy",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https",
+    "hostname": "personal-economy-ui.onrender.com"
+  }
+}

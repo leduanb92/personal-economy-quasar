@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Personal Economy</string>
+    <string name="title_activity_main">Personal Economy</string>
+    <string name="package_name">com.leduanb.personaleconomy</string>
+    <string name="custom_url_scheme">com.leduanb.personaleconomy</string>
+</resources>
