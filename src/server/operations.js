@@ -18,6 +18,9 @@ export default {
   deleteOperation(id) {
     return api.delete(baseUrl + id + "/");
   },
+  deleteOperations(ids) {
+    return api.post(baseUrl + "destroy-bulk/", { ids: ids });
+  },
   getOperationsByDate(date) {
     return api.get(baseUrl + "by-date/?date=" + date);
   },

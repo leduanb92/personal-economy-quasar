@@ -45,7 +45,7 @@
           size="sm"
           color="negative"
           icon="r_delete"
-          @click="onDeleteOperation(selectedOps[0])"
+          @click="onDeleteOperations"
         />
         <q-btn
           v-if="showEditButton"
@@ -196,6 +196,30 @@ const toggleModal = function (isEdit = false) {
   operationModal.operation = isEdit ? selectedOps.value[0] : null;
   operationModal.value = !operationModal.value;
 };
+
+const manageErrors = function (
+  error,
+  generalMessage = "There was an error. Please, try again"
+) {
+  if (error.response && error.response.status === 401) {
+    bus.emit("logout");
+  } else {
+    if (!error.response)
+      message.value =
+        "There was a network error. Please, check your connection";
+    else {
+      const errorData = error.response?.data || {};
+      const errorMessage =
+        errorData["generalErrors"] || errorData["message"] || generalMessage;
+      message.value = Array.isArray(errorMessage)
+        ? errorMessage.join(". ")
+        : errorMessage;
+      messageType.value = "negative";
+      showMessage.value = true;
+    }
+  }
+};
+
 const onSavedOperation = function (operation) {
   operationModal.operation = null;
   message.value = "The operation was saved successfully";
@@ -204,10 +228,17 @@ const onSavedOperation = function (operation) {
   refresh();
 };
 
-const onDeleteOperation = function (operation) {
+const onDeleteOperations = function () {
+  if (selectedOps.value.length === 0) {
+    return;
+  }
+  const multiple = selectedOps.value.length > 1;
+  const message = multiple
+    ? `Are you sure you want to delete these ${selectedOps.value.length} operations?`
+    : "Are you sure you want to delete this operation?";
   workspaceStore.showConfirmDialog({
-    title: "Delete Operation",
-    message: "Are you sure you want to delete this operation?",
+    title: "Delete Operation(s)",
+    message,
     ok: {
       label: "Delete",
       color: "negative",
@@ -219,37 +250,46 @@ const onDeleteOperation = function (operation) {
       flat: true,
     },
     onOk: () => {
-      deleteOperation(operation);
+      deleteOperations(multiple);
     },
   });
 };
-const deleteOperation = (operation) => {
-  loadingMessage.value = `Deleting operation...`;
+
+const deleteOperations = (multiple) => {
+  loadingMessage.value = `Deleting operation(s)...`;
   loading.value = true;
-  operationsServer
-    .deleteOperation(operation.id)
-    .then(() => {
-      message.value = "The operation was deleted successfully";
-      messageType.value = "positive";
-      showMessage.value = true;
-      clearSelection(false);
-      refresh();
-    })
-    .catch((error) => {
-      if (error.response && error.response.status === 401) {
-        bus.dispatch("logout");
-      } else {
-        const errorData = error.response?.data || {};
-        message.value =
-          errorData["generalErrors"]?.join(". ") ||
-          errorData["message"]?.join(". ") ||
-          "There was an error deleting the operation";
-        messageType.value = "negative";
+  if (multiple) {
+    const ids = selectedOps.value.map((op) => op.id);
+    operationsServer
+      .deleteOperations(ids)
+      .then(() => {
+        message.value = "The operations were deleted successfully";
+        messageType.value = "positive";
         showMessage.value = true;
-      }
-    })
-    .finally(() => (loading.value = false));
+        clearSelection(false);
+        refresh();
+      })
+      .catch((err) =>
+        manageErrors(err, "There was an error deleting the operations")
+      )
+      .finally(() => (loading.value = false));
+  } else {
+    operationsServer
+      .deleteOperation(selectedOps.value[0]?.id)
+      .then(() => {
+        message.value = "The operation was deleted successfully";
+        messageType.value = "positive";
+        showMessage.value = true;
+        clearSelection(false);
+        refresh();
+      })
+      .catch((err) =>
+        manageErrors(err, "There was an error deleting the operation")
+      )
+      .finally(() => (loading.value = false));
+  }
 };
+
 const refresh = () => {
   loading.value = true;
   operationsServer
@@ -259,7 +299,7 @@ const refresh = () => {
     })
     .catch((error) => {
       if (error.response && error.response.status === 401) {
-        bus.dispatch("logout");
+        bus.emit("logout");
       } else {
         if (error.response) {
           message.value = Object.values(error.response.data).flat().join(". ");
