@@ -1,5 +1,9 @@
 <template>
-  <q-card class="operation-card column" :class="{ selected }">
+  <q-card
+    class="operation-card column"
+    :class="{ selected }"
+    style="user-select: none"
+  >
     <q-card-section class="column flex-center q-pa-sm" style="flex-grow: 1">
       <div class="text-center text-subtitle1">{{ operation.date }}</div>
       <div
@@ -11,6 +15,7 @@
       <div
         class="text-center ellipsis-2-lines q-pt-sm"
         :class="$q.screen.name === 'xs' ? 'text-h5' : 'text-h6'"
+        style="user-select: text"
       >
         {{ operation.description }}
       </div>
@@ -40,7 +45,7 @@ const props = defineProps({
   min-height: 130px;
 
   &.selected {
-    transform: scale(0.9);
+    transform: scale(0.8);
     transform-origin: 50% 50%;
   }
 }
