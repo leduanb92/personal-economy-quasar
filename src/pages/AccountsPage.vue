@@ -19,6 +19,7 @@
             :account="account"
             @edit="onEditAccount(account)"
             @delete="onDeleteAccount(account)"
+            @view-operations="onViewOperations(account.id)"
           />
         </transition-group>
       </div>
@@ -41,12 +42,14 @@
 
 <script setup>
 import { computed, inject, onMounted, reactive, ref, watch } from "vue";
+import { useRouter } from "vue-router";
 import { useAccountsStore } from "stores/accounts-store";
 import { useWorkspaceStore } from "stores/workspace-store";
 import accountsServer from "src/server/accounts";
 import AccountModal from "components/accounts/AccountModal.vue";
 import AccountCard from "components/accounts/AccountCard.vue";
 
+const router = useRouter();
 const accountsStore = useAccountsStore();
 const workspaceStore = useWorkspaceStore();
 const bus = inject("bus");
@@ -99,6 +102,7 @@ watch(showMessage, () => {
 const toggleModal = function () {
   accountModal.value = !accountModal.value;
 };
+
 const onSavedAccount = function (account) {
   accountModal.account = null;
   message.value = "The account was saved successfully";
@@ -158,6 +162,11 @@ const deleteAccount = (account) => {
     })
     .finally(() => (loading.value = false));
 };
+
+const onViewOperations = (accountId) => {
+  router.push({ name: "operation-list", params: { accountId: accountId } });
+};
+
 const refresh = () => {
   loading.value = true;
   accountsServer

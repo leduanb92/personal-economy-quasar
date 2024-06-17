@@ -16,6 +16,14 @@
           round
           size="sm"
           color="primary"
+          icon="r_assignment"
+          @click="emit('view-operations', account.id)"
+        />
+        <q-btn
+          flat
+          round
+          size="sm"
+          color="primary"
           icon="r_edit"
           @click="emit('edit', account)"
         />
@@ -43,7 +51,7 @@
 import { useQuasar } from "quasar";
 
 const $q = useQuasar();
-const emit = defineEmits(["edit", "delete"]);
+const emit = defineEmits(["edit", "delete", "view-operations"]);
 const props = defineProps({
   account: { type: Object, required: true },
 });
