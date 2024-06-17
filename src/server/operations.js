@@ -3,8 +3,10 @@ import { api } from "boot/axios";
 let baseUrl = "pe/operations/";
 
 export default {
-  getOperations() {
-    return api.get(baseUrl);
+  getOperations(data) {
+    let url = baseUrl;
+    if (data?.accountId) url += "?account_id=" + data.accountId;
+    return api.get(url);
   },
   getOperation(id) {
     return api.get(baseUrl + id + "/");

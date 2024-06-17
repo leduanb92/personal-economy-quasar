@@ -1,8 +1,23 @@
 <template>
   <q-page
-    class="column flex-center q-pa-lg"
+    class="column no-wrap flex-center q-pa-lg"
     style="max-height: calc(100vh - 50px)"
   >
+    <div class="row q-mb-md full-width">
+      <div class="rounded-borders q-px-sm" :class="filterClasses">
+        <q-select
+          v-model="filters.accountId"
+          :options="accountOptions"
+          label="Account"
+          rounded
+          emit-value
+          map-options
+          clearable
+          dense
+          @update:model-value="refresh"
+        />
+      </div>
+    </div>
     <q-table
       title="Operations"
       row-key="id"
@@ -95,6 +110,7 @@
 <script setup>
 import { computed, inject, onMounted, reactive, ref, watch } from "vue";
 import { useOperationsStore } from "stores/operations-store";
+import { useAccountsStore } from "stores/accounts-store";
 import { useWorkspaceStore } from "stores/workspace-store";
 import operationsServer from "src/server/operations";
 import OperationModal from "components/operations/OperationModal.vue";
@@ -103,6 +119,7 @@ import { DateTime } from "luxon";
 import { useQuasar } from "quasar";
 
 const operationsStore = useOperationsStore();
+const accountsStore = useAccountsStore();
 const workspaceStore = useWorkspaceStore();
 const bus = inject("bus");
 const $q = useQuasar();
@@ -118,10 +135,6 @@ const showMessage = ref(false);
 const message = ref("");
 const messageType = ref("positive");
 const messageDelay = ref(3000);
-const deletingPosition = reactive({
-  x: 0,
-  y: 0,
-});
 const columns = reactive([
   {
     name: "account",
@@ -161,10 +174,30 @@ const columns = reactive([
 
 const selectedOps = ref([]);
 
+//Computed
 const operations = computed(() =>
-  operationsStore.operations.toSorted((a, b) => a.date.localeCompare(b.date))
+  operationsStore.operations.toSorted((a, b) => b.date.localeCompare(a.date))
 );
+const filters = computed({
+  get: () => operationsStore.filters,
+  set: (filters) => operationsStore.setFilters(filters),
+});
 const showEditButton = computed(() => selectedOps.value.length === 1);
+const accountOptions = computed(() => {
+  return accountsStore.accounts.map((account) => {
+    return {
+      label: account.name,
+      value: account.id,
+      data: account,
+    };
+  });
+});
+const filterClasses = computed(() => {
+  const classes = [];
+  classes.push($q.dark.isActive ? "shadow-3" : "shadow-2");
+  classes.push($q.screen.xs ? "col-12" : "col-4");
+  return classes.join(" ");
+});
 
 watch(loading, () => {
   if (loading.value) {
@@ -293,7 +326,7 @@ const deleteOperations = (multiple) => {
 const refresh = () => {
   loading.value = true;
   operationsServer
-    .getOperations()
+    .getOperations({ accountId: filters.value.accountId })
     .then((response) => {
       operationsStore.operations = response.data.results;
     })
