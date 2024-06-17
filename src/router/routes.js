@@ -1,3 +1,5 @@
+import { useOperationsStore } from "stores/operations-store";
+
 const routes = [
   {
     path: "/",
@@ -28,9 +30,22 @@ const routes = [
         component: () => import("pages/AccountsPage.vue"),
       },
       {
-        path: "operations",
+        path: "operations/:accountId?",
         name: "operation-list",
         component: () => import("pages/OperationsPage.vue"),
+        beforeEnter: (to, from, next) => {
+          const operationsStore = useOperationsStore();
+          if (to.params.accountId) {
+            const filters = {
+              accountId: parseInt(to.params.accountId),
+              date: null,
+            };
+            operationsStore.setFilters(filters);
+            next({ name: "operation-list" });
+          } else {
+            next();
+          }
+        },
       },
     ],
   },
