@@ -1,7 +1,7 @@
 <template>
   <q-card
     class="operation-card column"
-    :class="{ selected }"
+    :class="{ selected, 'bg-grey-9': $q.dark.isActive }"
     style="user-select: none"
   >
     <q-card-section class="column flex-center q-pa-sm" style="flex-grow: 1">
@@ -16,8 +16,12 @@
         class="text-center ellipsis-2-lines q-pt-sm"
         :class="$q.screen.name === 'xs' ? 'text-h5' : 'text-h6'"
         style="user-select: text"
+        @click.stop
       >
         {{ operation.description }}
+      </div>
+      <div v-if="selected" class="absolute-top-right q-pa-xs">
+        <q-icon name="r_check" size="sm" />
       </div>
     </q-card-section>
     <q-card-section

@@ -25,12 +25,15 @@
       :columns="columns"
       :loading="loading"
       :grid="$q.screen.xs"
-      v-model:selected="selectedOps"
       :selection="selectionType"
       :pagination="{ rowsPerPage: 20 }"
+      v-model:selected="selectedOps"
       class="operations-table shadow-2 rounded-borders full-width"
+      :class="{ 'q-dark': $q.dark.isActive }"
       style="flex-grow: 1; min-height: 15rem"
       card-container-class="justify-center overflow-auto q-gutter-md q-pa-sm"
+      rows-per-page-label="Per page"
+      :selected-rows-label="selectedRowsLabel"
       wrap-cells
       @row-contextmenu="
         (evt, row) => {
@@ -225,6 +228,10 @@ watch(showMessage, () => {
 });
 
 //Methods
+const selectedRowsLabel = function (numberOfRows) {
+  return `${numberOfRows} selected`;
+};
+
 const toggleModal = function (isEdit = false) {
   operationModal.operation = isEdit ? selectedOps.value[0] : null;
   operationModal.value = !operationModal.value;
@@ -253,7 +260,7 @@ const manageErrors = function (
   }
 };
 
-const onSavedOperation = function (operation) {
+const onSavedOperation = function () {
   operationModal.operation = null;
   message.value = "The operation was saved successfully";
   messageType.value = "positive";
@@ -378,4 +385,23 @@ onMounted(() => {
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.operations-table.q-table--grid {
+  :deep(.q-table__top) {
+    margin-bottom: 16px;
+  }
+  :deep(.q-table__bottom) {
+    .q-table__separator {
+      min-width: 6px !important;
+    }
+    .q-table__control {
+      &:last-child .q-table__bottom-item {
+        margin-right: 0;
+      }
+      .q-table__bottom-item {
+        margin-right: 8px;
+      }
+    }
+  }
+}
+</style>
