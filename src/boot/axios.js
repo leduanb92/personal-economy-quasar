@@ -9,8 +9,9 @@ import { setupInterceptors } from "src/server/core";
 // "export default () => {}" function below (which runs individually
 // for each client)
 const api = axios.create({
-  baseURL: "https://personal-economy-api.onrender.com/",
-  // baseURL: "http://localhost:8036/",
+  baseURL: import.meta.env.PROD
+    ? "https://personal-economy-api.onrender.com/"
+    : "http://localhost:8036/",
   withCredentials: false,
   headers: {
     Accept: "application/json",
