@@ -119,7 +119,7 @@ const fetchDashboardInfo = async () => {
     })
     .catch((error) => {
       if (error.response && error.response.status === 401) {
-        bus.dispatch("logout");
+        bus.emit("logout");
       } else {
         console.log("Show message to user");
       }
